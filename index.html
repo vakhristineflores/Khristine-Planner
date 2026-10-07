@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#8fb996">
+<link rel="icon" href="images/icon.png">
+<link rel="apple-touch-icon" href="images/icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Khristine's Daily Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,500&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one calm column of "today" cards up top, tabbed lists below; sage green carries structure, blush pink marks what's personal and done */
+:root{
+  --bg:#f6f8f3;
+  --surface:#ffffff;
+  --surface-2:#eef4ec;
+  --line:#dde6d8;
+  --ink:#2f3a30;
+  --ink-soft:#647262;
+  --sage:#8fb996;
+  --sage-deep:#4f7d58;
+  --sage-tint:#e3efe2;
+  --blush:#f2b8c6;
+  --blush-deep:#c4607b;
+  --blush-tint:#fbe8ed;
+  --warn:#c98a2b;
+  --danger:#c0504d;
+  --shadow:0 1px 2px rgba(47,58,48,.05),0 6px 20px rgba(47,58,48,.06);
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:18px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#171c18;--surface:#20271f;--surface-2:#263024;--line:#334031;--ink:#e8eee5;--ink-soft:#a3b09f;
+  --sage:#7fae88;--sage-deep:#a9d4b0;--sage-tint:#2a3a2b;--blush:#e7a3b4;--blush-deep:#f0a9bb;--blush-tint:#3a2a2f;
+  --warn:#e2ad5a;--danger:#e48683;--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171c18;--surface:#20271f;--surface-2:#263024;--line:#334031;--ink:#e8eee5;--ink-soft:#a3b09f;
+  --sage:#7fae88;--sage-deep:#a9d4b0;--sage-tint:#2a3a2b;--blush:#e7a3b4;--blush-deep:#f0a9bb;--blush-tint:#3a2a2f;
+  --warn:#e2ad5a;--danger:#e48683;--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:18px 60px}
+h1,h2,h3{font-family:var(--display);font-weight:650;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:1.15rem}
+.eyebrow{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blush-deep);outline-offset:2px;border-radius:8px}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.brand{font-family:var(--display);font-size:1.25rem;font-weight:650;display:flex;align-items:center;gap:8px}
+.brand-dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--sage) 50%,var(--blush) 50%)}
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);padding:4px;border-radius:999px;margin-left:auto;overflow-x:auto;max-width:100%}
+.tab{border:0;background:transparent;padding:7px 14px;border-radius:999px;font-weight:600;font-size:.88rem;color:var(--ink-soft);white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--sage-tint);color:var(--sage-deep)}
+.icon-btn{border:1px solid var(--line);background:var(--surface);width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--ink-soft)}
+
+/* cards */
+.grid{display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px}
+.muted{color:var(--ink-soft)}
+.small{font-size:.84rem}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;background:linear-gradient(120deg,var(--sage-tint),var(--blush-tint));border:0;overflow:hidden;position:relative;padding:22px 22px 0}
+.hero h1{font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.1}
+.hero .date{margin-top:6px;color:var(--ink-soft);font-weight:500}
+.hero-text{padding-bottom:22px;min-width:0}
+.sticker{width:clamp(120px,22vw,190px);height:auto;display:block;filter:drop-shadow(0 6px 12px rgba(80,60,60,.18));transform:rotate(4deg);transform-origin:bottom center;transition:transform .3s}
+.sticker{cursor:pointer}
+.sticker.swap{animation:pop .35s ease}
+@keyframes pop{0%{transform:rotate(4deg) scale(.9);opacity:.4}100%{transform:rotate(4deg) scale(1);opacity:1}}
+.pics{display:flex;gap:6px;margin-top:12px}
+.pics button{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:var(--surface)}
+.pics button[aria-pressed="true"]{background:var(--blush-deep)}
+.sticker:hover{transform:rotate(-2deg) scale(1.03)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.stat{background:var(--surface);border-radius:14px;padding:8px 12px;min-width:92px}
+.stat b{display:block;font-family:var(--display);font-size:1.35rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:.75rem;color:var(--ink-soft);font-weight:600}
+.bar{height:8px;border-radius:99px;background:var(--surface);margin-top:14px;overflow:hidden;max-width:360px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sage),var(--blush));border-radius:99px;transition:width .4s}
+
+/* verse */
+.verse{background:var(--surface-2);border-color:transparent;position:relative}
+.verse blockquote{margin:6px 0 10px;font-family:var(--display);font-style:italic;font-size:1.12rem;line-height:1.45}
+.verse-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.niv{font-size:.82rem;font-weight:700;color:var(--blush-deep);text-decoration:none;background:var(--surface);padding:5px 10px;border-radius:99px}
+.niv:hover{text-decoration:underline}
+.verse cite{font-style:normal;font-weight:700;color:var(--sage-deep);font-size:.9rem}
+
+/* dashboard layout */
+.dash{grid-template-columns:repeat(12,1fr)}
+.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.span-6{grid-column:span 6}
+@media (max-width:900px){.span-8,.span-7,.span-5,.span-4,.span-6{grid-column:span 12}}
+
+/* lists */
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding:9px 8px;border-radius:12px}
+.task:hover{background:var(--surface-2)}
+.task .title{font-weight:500;overflow-wrap:anywhere}
+.task.done .title{text-decoration:line-through;color:var(--ink-soft)}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px}
+.chip{font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--ink-soft);white-space:nowrap}
+.chip.work{background:var(--sage-tint);color:var(--sage-deep)}
+.chip.life{background:var(--blush-tint);color:var(--blush-deep)}
+.chip.high{background:transparent;border:1px solid var(--danger);color:var(--danger)}
+.chip.med{background:transparent;border:1px solid var(--warn);color:var(--warn)}
+.chip.late{background:var(--danger);color:var(--surface)}
+.chip.ex{background:transparent;border:1px dashed var(--line);color:var(--ink-soft)}
+.check{appearance:none;width:22px;height:22px;border-radius:7px;border:2px solid var(--sage);margin:1px 0 0;display:grid;place-items:center;cursor:pointer;background:var(--surface)}
+.check.life{border-color:var(--blush)}
+.check:checked{background:var(--sage)}
+.check.life:checked{background:var(--blush)}
+.check:checked::after{content:"";width:6px;height:11px;border:solid var(--surface);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.del{border:0;background:transparent;color:var(--ink-soft);opacity:0;padding:2px 6px;border-radius:8px;font-size:1.1rem;line-height:1}
+.task:hover .del,.del:focus-visible{opacity:1}
+@media (hover:none){.del{opacity:.55}}
+.empty{padding:14px 8px;color:var(--ink-soft);font-size:.9rem}
+
+/* add form */
+.add{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.add input[type=text]{flex:1 1 220px;min-width:0}
+.field{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 12px}
+.field:focus{outline:2px solid var(--sage);outline-offset:0;border-color:transparent}
+.btn{border:0;border-radius:12px;padding:9px 16px;font-weight:700;background:var(--sage-deep);color:var(--surface)}
+.btn.pink{background:var(--blush-deep)}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--ink-soft)}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+
+/* schedule */
+.sched{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.ev{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--surface-2);border-left:4px solid var(--sage)}
+.ev.life{border-left-color:var(--blush)}
+.ev time{font-weight:700;font-variant-numeric:tabular-nums;font-size:.85rem;color:var(--ink-soft)}
+.ev .t{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.ev .day{font-size:.75rem;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em}
+
+/* big 3 */
+.big3{display:flex;flex-direction:column;gap:8px;counter-reset:b}
+.big3 label{display:flex;gap:10px;align-items:center}
+.big3 label::before{counter-increment:b;content:counter(b);font-family:var(--display);font-weight:650;width:28px;height:28px;border-radius:50%;background:var(--blush-tint);color:var(--blush-deep);display:grid;place-items:center;flex:none}
+.big3 input{flex:1;min-width:0}
+
+/* habits */
+.habits{overflow-x:auto}
+.habits table{border-collapse:collapse;width:100%;min-width:360px}
+.habits th{font-size:.72rem;font-weight:700;color:var(--ink-soft);text-transform:uppercase;padding:4px 2px}
+.habits td{padding:4px 2px;text-align:center}
+.habits td:first-child{text-align:left;font-weight:500;font-size:.9rem;padding-right:8px;white-space:nowrap}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:transparent}
+.dot[aria-pressed="true"]{background:var(--sage);border-color:var(--sage)}
+.habits th.today{color:var(--blush-deep)}
+
+/* timer */
+.timer{text-align:center}
+.timer .clock{font-family:var(--display);font-size:3rem;font-variant-numeric:tabular-nums;line-height:1;margin:6px 0 12px}
+.timer .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+/* calendar */
+.cal-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.cal-head h2{font-size:1.4rem;margin-right:auto}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .dow{font-size:.72rem;font-weight:700;color:var(--ink-soft);text-align:center;text-transform:uppercase;padding:4px 0}
+.cell{min-height:88px;border-radius:12px;background:var(--surface-2);padding:6px;text-align:left;border:2px solid transparent;display:flex;flex-direction:column;gap:3px;min-width:0}
+.cell.other{opacity:.4}
+.cell.today{border-color:var(--blush)}
+.cell.sel{border-color:var(--sage-deep)}
+.cell .n{font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
+.cell .e{font-size:.7rem;font-weight:600;padding:1px 5px;border-radius:6px;background:var(--sage-tint);color:var(--sage-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell .e.life{background:var(--blush-tint);color:var(--blush-deep)}
+.cell .more{font-size:.68rem;color:var(--ink-soft)}
+@media (max-width:600px){.cell{min-height:54px}.cell .e{display:none}.cell .dots{display:flex}.cell .more{display:none}}
+.dots{display:none;gap:3px;flex-wrap:wrap}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--sage)}
+.dots i.life{background:var(--blush-deep)}
+
+/* notes */
+textarea.field{width:100%;min-height:280px;resize:vertical;line-height:1.6}
+
+/* banner + drawer */
+.banner{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--blush-tint);border-radius:14px;padding:10px 14px;margin-bottom:16px;font-size:.9rem}
+.banner span{flex:1 1 240px}
+.drawer{position:fixed;inset:0;background:rgba(20,25,20,.35);display:flex;justify-content:flex-end;z-index:10}
+.drawer .panel{background:var(--surface);width:min(420px,100%);height:100%;overflow:auto;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+.drawer label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.9rem}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:12px;font-weight:600;font-size:.9rem;z-index:20}
+.view{display:block}
+.gcal-frame{border-radius:14px;overflow:hidden;background:var(--surface-2);margin-bottom:10px}
+.gcal-frame iframe{display:block;width:100%;height:min(70vh,640px);border:0;background:#fff}
+a{color:var(--sage-deep)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="brand-dot" aria-hidden="true"></span><span id="brandName">Khristine's Planner</span></div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" data-view="today" aria-selected="true" id="tab-today">Today</button>
+      <button class="tab" role="tab" data-view="work" aria-selected="false" id="tab-work">CraigAds</button>
+      <button class="tab" role="tab" data-view="life" aria-selected="false" id="tab-life">Life</button>
+      <button class="tab" role="tab" data-view="cal" aria-selected="false" id="tab-cal">Calendar</button>
+      <button class="tab" role="tab" data-view="notes" aria-selected="false" id="tab-notes">Notes</button>
+    </nav>
+    <button class="icon-btn" id="openSettings" aria-label="Settings and backup" title="Settings and backup">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <div class="banner" id="exampleBanner" hidden>
+    <span>The tasks and events here are examples so you can see how it works. Clear them when you're ready to add your own.</span>
+    <button class="btn pink" id="clearExamples">Clear examples</button>
+  </div>
+
+  <!-- TODAY -->
+  <section class="view" id="view-today">
+    <div class="grid dash">
+      <div class="card hero span-8">
+        <div class="hero-text">
+          <div class="eyebrow" id="weekLabel"></div>
+          <h1 id="greeting">Good day</h1>
+          <div class="date" id="todayDate"></div>
+          <div class="stats">
+            <div class="stat"><b id="statLeft">0</b><span>to do today</span></div>
+            <div class="stat"><b id="statEvents">0</b><span>events today</span></div>
+            <div class="stat"><b id="statLate">0</b><span>overdue</span></div>
+          </div>
+          <div class="pics" id="picDots" aria-label="Photos of Aria"></div>
+          <div class="bar" aria-label="Today's progress"><i id="progBar" style="width:0%"></i></div>
+          <div class="small muted" id="progText" style="margin-top:6px"></div>
+        </div>
+        <img class="sticker" id="sticker" alt="Aria" title="Tap for another photo of Aria" src="images/aria-1.webp">
+      </div>
+
+      <div class="card verse span-4">
+        <div class="eyebrow">Verse for today</div>
+        <blockquote id="verseText"></blockquote>
+        <div class="verse-foot"><cite id="verseRef"></cite><a id="verseNiv" class="niv" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Read in NIV ↗</a></div>
+      </div>
+
+      <div class="card span-7">
+        <div class="card-head"><h2>Today's to-dos</h2><span class="small muted">CraigAds + Life, due today or overdue</span></div>
+        <ul class="tasks" id="todayTasks"></ul>
+      </div>
+
+      <div class="card span-5">
+        <div class="card-head"><h2>Today's schedule</h2><button class="pill" data-goto="cal">Open calendar</button></div>
+        <ul class="sched" id="todayEvents"></ul>
+      </div>
+
+      <div class="card span-4">
+        <div class="card-head"><h2>Top 3 for today</h2></div>
+        <p class="small muted" style="margin:0 0 10px">If only three things get done, make it these.</p>
+        <div class="big3">
+          <label><input class="field" id="big0" type="text" placeholder="Most important thing"></label>
+          <label><input class="field" id="big1" type="text" placeholder="Second"></label>
+          <label><input class="field" id="big2" type="text" placeholder="Third"></label>
+        </div>
+      </div>
+
+      <div class="card span-8">
+        <div class="card-head"><h2>Coming up next week</h2><span class="small muted" id="nextWeekRange"></span></div>
+        <ul class="sched" id="nextWeek"></ul>
+      </div>
+
+      <div class="card span-8">
+        <div class="card-head"><h2>Habits this week</h2><button class="pill" id="editHabits">Edit habits</button></div>
+        <div class="habits" id="habits"></div>
+      </div>
+
+      <div class="card timer span-4">
+        <div class="eyebrow">Focus timer</div>
+        <div class="clock" id="clock">25:00</div>
+        <div class="row">
+          <button class="btn" id="tStart">Start</button>
+          <button class="btn ghost" id="tReset">Reset</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="pill" data-min="25" aria-pressed="true">25 focus</button>
+          <button class="pill" data-min="50" aria-pressed="false">50 deep work</button>
+          <button class="pill" data-min="5" aria-pressed="false">5 break</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="view" id="view-work" hidden>
+    <div class="card">
+      <div class="card-head"><h2>CraigAds tasks</h2><span class="small muted" id="workCount"></span></div>
+      <form class="add" data-list="work">
+        <input class="field" type="text" id="workTitle" placeholder="Add a CraigAds task…" required>
+        <select class="field" id="workCat" aria-label="Category"></select>
+        <select class="field" id="workPri" aria-label="Priority"><option value="high">High</option><option value="med" selected>Medium</option><option value="low">Low</option></select>
+        <input class="field" type="date" id="workDue" aria-label="Due date">
+        <button class="btn" type="submit">Add</button>
+      </form>
+      <div class="filters" id="workFilters"></div>
+      <ul class="tasks" id="workList"></ul>
+    </div>
+  </section>
+
+  <!-- LIFE -->
+  <section class="view" id="view-life" hidden>
+    <div class="card">
+      <div class="card-head"><h2>Life & home</h2><span class="small muted" id="lifeCount"></span></div>
+      <form class="add" data-list="life">
+        <input class="field" type="text" id="lifeTitle" placeholder="Add a life task…" required>
+        <select class="field" id="lifeCat" aria-label="Category"></select>
+        <select class="field" id="lifePri" aria-label="Priority"><option value="high">High</option><option value="med" selected>Medium</option><option value="low">Low</option></select>
+        <input class="field" type="date" id="lifeDue" aria-label="Due date">
+        <button class="btn pink" type="submit">Add</button>
+      </form>
+      <div class="filters" id="lifeFilters"></div>
+      <ul class="tasks" id="lifeList"></ul>
+    </div>
+  </section>
+
+  <!-- CALENDAR -->
+  <section class="view" id="view-cal" hidden>
+    <div class="filters" role="group" aria-label="Calendar source" style="margin-bottom:14px">
+      <button class="pill" data-calsrc="planner" aria-pressed="true">My planner</button>
+      <button class="pill" data-calsrc="google" aria-pressed="false">CraigAds Google Calendar</button>
+    </div>
+    <div class="card" id="gcalPane" hidden>
+      <div class="card-head" style="flex-wrap:wrap">
+        <h2>CraigAds Google Calendar</h2>
+        <div class="filters" style="margin:0" id="gcalModes">
+          <button class="pill" data-gmode="WEEK" aria-pressed="true">Week</button>
+          <button class="pill" data-gmode="MONTH" aria-pressed="false">Month</button>
+          <button class="pill" data-gmode="AGENDA" aria-pressed="false">Agenda</button>
+        </div>
+      </div>
+      <div id="gcalEmpty">
+        <p style="margin-top:0">Connect your CraigAds calendar once and it stays up to date on its own.</p>
+        <ol class="small" style="padding-left:20px;line-height:1.8">
+          <li>Open <a href="https://calendar.google.com/calendar/r/settings" target="_blank" rel="noopener">Google Calendar settings</a> on a computer.</li>
+          <li>On the left, under <b>Settings for my calendars</b>, click your CraigAds calendar.</li>
+          <li>Scroll to <b>Integrate calendar</b> and copy the <b>Calendar ID</b> (or the whole <b>Embed code</b>).</li>
+          <li>Paste it below and tap Connect.</li>
+        </ol>
+        <form class="add" id="gcalForm">
+          <input class="field" type="text" id="gcalInput" placeholder="Paste Calendar ID or embed code" required>
+          <button class="btn" type="submit">Connect</button>
+        </form>
+      </div>
+      <div id="gcalLive" hidden>
+        <div class="gcal-frame"><iframe id="gcalFrame" title="CraigAds Google Calendar" loading="lazy"></iframe></div>
+        <p class="small muted" style="margin-bottom:0">Showing a blank box? You need to be signed in to Google with access to this calendar in the same browser. This preview can't show it either; it appears once the planner is on GitHub. <button class="pill" id="gcalChange" type="button">Change calendar</button> <a class="pill" id="gcalOpen" href="https://calendar.google.com/" target="_blank" rel="noopener" style="text-decoration:none">Open in Google ↗</a></p>
+      </div>
+    </div>
+    <div class="grid dash" id="plannerCal">
+      <div class="card span-8">
+        <div class="cal-head">
+          <h2 id="calTitle"></h2>
+          <button class="pill" id="calPrev" aria-label="Previous month">‹</button>
+          <button class="pill" id="calToday">Today</button>
+          <button class="pill" id="calNext" aria-label="Next month">›</button>
+        </div>
+        <div class="cal" id="cal"></div>
+        <div class="small muted" style="margin-top:10px"><span class="chip work">CraigAds</span> <span class="chip life">Life</span> Tap a day to see or add events.</div>
+      </div>
+      <div class="card span-4">
+        <div class="card-head"><h2 id="dayTitle">Day</h2></div>
+        <form class="add" id="evForm" style="flex-direction:column">
+          <input class="field" type="text" id="evTitle" placeholder="Event name" required>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input class="field" type="time" id="evTime" aria-label="Time" style="flex:1 1 110px;min-width:0">
+            <select class="field" id="evKind" aria-label="Type" style="flex:1 1 110px;min-width:0"><option value="work">CraigAds</option><option value="life">Life</option></select>
+          </div>
+          <button class="btn" type="submit">Add event</button>
+        </form>
+        <ul class="sched" id="dayEvents"></ul>
+        <div class="card-head" style="margin-top:20px"><h2>Next week</h2></div>
+        <ul class="sched" id="calNextWeek"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section class="view" id="view-notes" hidden>
+    <div class="grid dash">
+      <div class="card span-8">
+        <div class="card-head"><h2>Brain dump</h2><span class="small muted" id="notesSaved">Saves as you type</span></div>
+        <textarea class="field" id="notes" placeholder="Ideas, client notes, grocery list, things to remember… get it out of your head."></textarea>
+      </div>
+      <div class="card span-4">
+        <div class="card-head"><h2>Weekly reset</h2></div>
+        <p class="small muted" style="margin-top:0">A 15-minute check every Sunday night keeps the week from running you.</p>
+        <ul class="tasks" id="reset"></ul>
+        <button class="pill" id="resetClear" style="margin-top:8px">Start a new week</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="panel" role="dialog" aria-label="Settings">
+    <div class="card-head"><h2>Settings</h2><button class="icon-btn" id="closeSettings" aria-label="Close">✕</button></div>
+    <label>Your name<input class="field" id="setName" type="text"></label>
+    <label>CraigAds Google Calendar ID or embed code<input class="field" id="setGcal" type="text" placeholder="e.g. something@group.calendar.google.com"></label>
+    <label>Habits (one per line)<textarea class="field" id="setHabits" style="min-height:140px"></textarea></label>
+    <button class="btn" id="saveSettings">Save settings</button>
+    <hr style="border:0;border-top:1px solid var(--line);width:100%">
+    <div>
+      <h3 style="font-size:1rem;margin-bottom:4px">Backup</h3>
+      <p class="small muted" style="margin:0 0 8px">Everything saves in this browser only. Copy a backup now and then, and paste it here to restore it on another device.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="copyBackup">Copy backup</button><button class="btn ghost" id="restoreBackup">Restore from text below</button></div>
+      <textarea class="field" id="backupBox" style="min-height:90px;margin-top:8px" placeholder="Paste a backup here to restore"></textarea>
+    </div>
+    <div>
+      <h3 style="font-size:1rem;margin-bottom:4px">Start fresh</h3>
+      <p class="small muted" style="margin:0 0 8px">Removes every task, event, note and habit check.</p>
+      <button class="btn ghost" id="wipe">Erase everything</button>
+      <button class="btn pink" id="wipeConfirm" hidden>Yes, erase it all</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const KEY='khristine-planner-v1';
+const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const uid=()=>Math.random().toString(36).slice(2,10);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>iso(new Date());
+const fmtTime=t=>{if(!t)return'All day';let[h,m]=t.split(':').map(Number);const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+pad(m)+' '+ap};
+const fmtShort=s=>parse(s).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+
+const CATS={work:['Clients','Ads','Content','Admin','Sales'],life:['Home','Baby','Self-care','Errands','Faith','Money']};
+
+// Berean Standard Bible (public domain, CC0). One verse per day of the year.
+const VERSES=[["Trust in the LORD with all your heart, and lean not on your own understanding; in all your ways acknowledge Him, and He will make your paths straight.","Proverbs 3:5–6"],["Commit your works to the LORD and your plans will be achieved.","Proverbs 16:3"],["I can do all things through Christ who gives me strength.","Philippians 4:13"],["Be anxious for nothing, but in everything, by prayer and petition, with thanksgiving, present your requests to God. And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.","Philippians 4:6–7"],["Come to Me, all you who are weary and burdened, and I will give you rest. Take My yoke upon you and learn from Me; for I am gentle and humble in heart, and you will find rest for your souls.","Matthew 11:28–29"],["This is the day that the LORD has made; we will rejoice and be glad in it.","Psalm 118:24"],["Whatever you do, work at it with your whole being, for the Lord and not for men,","Colossians 3:23"],["A Psalm of David. The LORD is my shepherd; I shall not want. He makes me lie down in green pastures; He leads me beside quiet waters. He restores my soul; He guides me in the paths of righteousness for the sake of His name.","Psalm 23:1–3"],["Cast your burden upon the LORD and He will sustain you; He will never let the righteous be shaken.","Psalm 55:22"],["But those who wait upon the LORD will renew their strength; they will mount up with wings like eagles; they will run and not grow weary, they will walk and not faint.","Isaiah 40:31"],["For God has not given us a spirit of fear, but of power, love, and self-control.","2 Timothy 1:7"],["“Be still and know that I am God; I will be exalted among the nations, I will be exalted over the earth.”","Psalm 46:10"],["Children are indeed a heritage from the LORD, and the fruit of the womb is His reward.","Psalm 127:3"],["But He said to me, “My grace is sufficient for you, for My power is perfected in weakness.” Therefore I will boast all the more gladly in my weaknesses, so that the power of Christ may rest on me.","2 Corinthians 12:9"],["A man’s heart plans his course, but the LORD determines his steps.","Proverbs 16:9"],["Let us not grow weary in well-doing, for in due time we will reap a harvest if we do not give up.","Galatians 6:9"],["Because of the loving devotion of the LORD we are not consumed, for His mercies never fail. They are new every morning; great is Your faithfulness!","Lamentations 3:22–23"],["Your word is a lamp to my feet and a light to my path.","Psalm 119:105"],["And we know that God works all things together for the good of those who love Him, who are called according to His purpose.","Romans 8:28"],["Do not fear, for I am with you; do not be afraid, for I am your God. I will strengthen you; I will surely help you; I will uphold you with My right hand of righteousness.","Isaiah 41:10"],["The plans of the diligent bring plenty, as surely as haste leads to poverty.","Proverbs 21:5"],["Strength and honor are her clothing, and she can laugh at the days to come.","Proverbs 31:25"],["She watches over the affairs of her household and does not eat the bread of idleness.","Proverbs 31:27"],["Peace I leave with you; My peace I give to you. I do not give to you as the world gives. Do not let your hearts be troubled; do not be afraid.","John 14:27"],["But seek first the kingdom of God and His righteousness, and all these things will be added unto you.","Matthew 6:33"],["Delight yourself in the LORD, and He will give you the desires of your heart.","Psalm 37:4"],["being confident of this, that He who began a good work in you will carry it on to completion until the day of Christ Jesus.","Philippians 1:6"],["To everything there is a season, and a time for every purpose under heaven:","Ecclesiastes 3:1"],["‘May the LORD bless you and keep you; may the LORD cause His face to shine upon you and be gracious to you; may the LORD lift up His countenance toward you and give you peace.’","Numbers 6:24–26"],["So teach us to number our days, that we may present a heart of wisdom.","Psalm 90:12"],["A song of ascents. Of Solomon. Unless the LORD builds the house, its builders labor in vain; unless the LORD protects the city, its watchmen stand guard in vain.","Psalm 127:1"],["For I know the plans I have for you, declares the LORD, plans to prosper you and not to harm you, to give you a future and a hope.","Jeremiah 29:11"],["Have I not commanded you to be strong and courageous? Do not be afraid; do not be discouraged, for the LORD your God is with you wherever you go.","Joshua 1:9"],["The LORD Himself goes before you; He will be with you. He will never leave you nor forsake you. Do not be afraid or discouraged.","Deuteronomy 31:8"],["I have set the LORD always before me. Because He is at my right hand, I will not be shaken.","Psalm 16:8"],["The LORD is my rock, my fortress, and my deliverer. My God is my rock, in whom I take refuge, my shield, and the horn of my salvation, my stronghold.","Psalm 18:2"],["May the words of my mouth and the meditation of my heart be pleasing in Your sight, O LORD, my Rock and my Redeemer.","Psalm 19:14"],["Even though I walk through the valley of the shadow of death, I will fear no evil, for You are with me; Your rod and Your staff, they comfort me.","Psalm 23:4"],["Surely goodness and mercy will follow me all the days of my life, and I will dwell in the house of the LORD forever.","Psalm 23:6"],["Of David. The LORD is my light and my salvation— whom shall I fear? The LORD is the stronghold of my life— whom shall I dread?","Psalm 27:1"],["Wait patiently for the LORD; be strong and courageous. Wait patiently for the LORD!","Psalm 27:14"],["The LORD is my strength and my shield; my heart trusts in Him, and I am helped. Therefore my heart rejoices, and I give thanks to Him with my song.","Psalm 28:7"],["The LORD gives His people strength; the LORD blesses His people with peace.","Psalm 29:11"],["For His anger is fleeting, but His favor lasts a lifetime. Weeping may stay the night, but joy comes in the morning.","Psalm 30:5"],["Be strong and courageous, all you who hope in the LORD.","Psalm 31:24"],["I will instruct you and teach you the way you should go; I will give you counsel and watch over you.","Psalm 32:8"],["Our soul waits for the LORD; He is our help and our shield.","Psalm 33:20"],["I sought the LORD, and He answered me; He delivered me from all my fears.","Psalm 34:4"],["Taste and see that the LORD is good; blessed is the man who takes refuge in Him!","Psalm 34:8"],["The LORD is near to the brokenhearted; He saves the contrite in spirit.","Psalm 34:18"],["Commit your way to the LORD; trust in Him, and He will do it.","Psalm 37:5"],["Be still before the LORD and wait patiently for Him; do not fret when men prosper in their ways, when they carry out wicked schemes.","Psalm 37:7"],["The steps of a man are ordered by the LORD who takes delight in his journey.","Psalm 37:23"],["For the choirmaster. A Psalm of David. I waited patiently for the LORD; He inclined to me and heard my cry.","Psalm 40:1"],["Why are you downcast, O my soul? Why the unease within me? Put your hope in God, for I will yet praise Him, my Savior and my God.","Psalm 42:11"],["For the choirmaster. Of the sons of Korah. According to Alamoth. A song. God is our refuge and strength, an ever-present help in times of trouble.","Psalm 46:1"],["Create in me a clean heart, O God, and renew a right spirit within me.","Psalm 51:10"],["When I am afraid, I put my trust in You.","Psalm 56:3"],["For Your loving devotion reaches to the heavens, and Your faithfulness to the clouds.","Psalm 57:10"],["But I will sing of Your strength and proclaim Your loving devotion in the morning. For You are my fortress, my refuge in times of trouble.","Psalm 59:16"],["From the ends of the earth I call out to You whenever my heart is faint. Lead me to the rock that is higher than I.","Psalm 61:2"],["For the choirmaster. According to Jeduthun. A Psalm of David. In God alone my soul finds rest; my salvation comes from Him.","Psalm 62:1"],["Trust in Him at all times, O people; pour out your hearts before Him. God is our refuge. Selah","Psalm 62:8"],["A Psalm of David, when he was in the Wilderness of Judah. O God, You are my God. Earnestly I seek You; my soul thirsts for You. My body yearns for You in a dry and weary land without water.","Psalm 63:1"],["Because Your loving devotion is better than life, my lips will glorify You.","Psalm 63:3"],["Blessed be the Lord, who daily bears our burden, the God of our salvation. Selah","Psalm 68:19"],["For You are my hope, O Lord GOD, my confidence from my youth.","Psalm 71:5"],["My flesh and my heart may fail, but God is the strength of my heart and my portion forever.","Psalm 73:26"],["For the LORD God is a sun and a shield; the LORD gives grace and glory; He withholds no good thing from those who walk with integrity.","Psalm 84:11"],["For You, O Lord, are kind and forgiving, rich in loving devotion to all who call on You.","Psalm 86:5"],["May the favor of the Lord our God rest upon us; establish for us the work of our hands— yes, establish the work of our hands!","Psalm 90:17"],["He who dwells in the shelter of the Most High will abide in the shadow of the Almighty. I will say to the LORD, “You are my refuge and my fortress, my God, in whom I trust.”","Psalm 91:1–2"],["He will cover you with His feathers; under His wings you will find refuge; His faithfulness is a shield and rampart.","Psalm 91:4"],["When anxiety overwhelms me, Your consolation delights my soul.","Psalm 94:19"],["Come, let us sing for joy to the LORD; let us shout to the Rock of our salvation!","Psalm 95:1"],["Enter His gates with thanksgiving and His courts with praise; give thanks to Him and bless His name. For the LORD is good, and His loving devotion endures forever; His faithfulness continues to all generations.","Psalm 100:4–5"],["Bless the LORD, O my soul, and do not forget all His kind deeds—","Psalm 103:2"],["For as high as the heavens are above the earth, so great is His loving devotion for those who fear Him.","Psalm 103:11"],["Give thanks to the LORD, for He is good; His loving devotion endures forever.","Psalm 107:1"],["The fear of the LORD is the beginning of wisdom; all who follow His precepts gain rich understanding. His praise endures forever!","Psalm 111:10"],["He does not fear bad news; his heart is steadfast, trusting in the LORD.","Psalm 112:7"],["I love the LORD, for He has heard my voice— my appeal for mercy.","Psalm 116:1"],["I have hidden Your word in my heart that I might not sin against You.","Psalm 119:11"],["You are my hiding place and my shield; I put my hope in Your word.","Psalm 119:114"],["A song of ascents. I lift up my eyes to the hills. From where does my help come? My help comes from the LORD, the Maker of heaven and earth.","Psalm 121:1–2"],["The LORD will guard you from all evil; He will preserve your soul. The LORD will watch over your coming and going, both now and forevermore.","Psalm 121:7–8"],["The LORD has done great things for us; we are filled with joy.","Psalm 126:3"],["Give thanks to the LORD, for He is good. His loving devotion endures forever.","Psalm 136:1"],["The LORD will fulfill His purpose for me. O LORD, Your loving devotion endures forever— do not abandon the works of Your hands.","Psalm 138:8"],["I praise You, for I am fearfully and wonderfully made. Marvelous are Your works, and I know this very well.","Psalm 139:14"],["Search me, O God, and know my heart; test me and know my concerns. See if there is any offensive way in me; lead me in the way everlasting.","Psalm 139:23–24"],["Let me hear Your loving devotion in the morning, for I have put my trust in You. Teach me the way I should walk, for to You I lift up my soul.","Psalm 143:8"],["The LORD is near to all who call on Him, to all who call out to Him in truth.","Psalm 145:18"],["He heals the brokenhearted and binds up their wounds.","Psalm 147:3"],["Let everything that has breath praise the LORD! Hallelujah!","Psalm 150:6"],["I will lie down and sleep in peace, for You alone, O LORD, make me dwell in safety.","Psalm 4:8"],["In the morning, O LORD, You hear my voice; at daybreak I lay my plea before You and wait in expectation.","Psalm 5:3"],["Those who know Your name trust in You, for You, O LORD, have not forsaken those who seek You.","Psalm 9:10"],["You have made known to me the path of life; You will fill me with joy in Your presence, with eternal pleasures at Your right hand.","Psalm 16:11"],["May He give you the desires of your heart and make all your plans succeed.","Psalm 20:4"],["Show me Your ways, O LORD; teach me Your paths. Guide me in Your truth and teach me, for You are the God of my salvation; all day long I wait for You.","Psalm 25:4–5"],["For Your loving devotion is before my eyes, and I have walked in Your truth.","Psalm 26:3"],["Your loving devotion, O LORD, reaches to the heavens, Your faithfulness to the clouds.","Psalm 36:5"],["Trust in the LORD and do good; dwell in the land and cultivate faithfulness.","Psalm 37:3"],["And now, O Lord, for what do I wait? My hope is in You.","Psalm 39:7"],["For the choirmaster. A Psalm of David. Blessed is the one who cares for the poor; the LORD will deliver him in the day of trouble.","Psalm 41:1"],["For this God is our God forever and ever; He will be our guide even till death.","Psalm 48:14"],["Surely God is my helper; the Lord is the sustainer of my soul.","Psalm 54:4"],["Blessed be God, who has not rejected my prayer or withheld from me His loving devotion!","Psalm 66:20"],["I will listen to what God the LORD will say; for He will surely speak peace to His people and His saints; He will not let them return to folly.","Psalm 85:8"],["A Maskil of Ethan the Ezrahite. I will sing of the loving devotion of the LORD forever; with my mouth I will proclaim Your faithfulness to all generations.","Psalm 89:1"],["A Psalm. A song for the Sabbath day. It is good to praise the LORD, and to sing praises to Your name, O Most High, to proclaim Your loving devotion in the morning and Your faithfulness at night","Psalm 92:1–2"],["Sing to the LORD a new song; sing to the LORD, all the earth.","Psalm 96:1"],["I will sing to the LORD all my life; I will sing praise to my God while I have my being.","Psalm 104:33"],["From where the sun rises to where it sets, the name of the LORD is praised.","Psalm 113:3"],["Not to us, O LORD, not to us, but to Your name be the glory, because of Your loving devotion, because of Your faithfulness.","Psalm 115:1"],["The LORD is on my side; I will not be afraid. What can man do to me?","Psalm 118:6"],["This is my comfort in affliction, that Your promise has given me life.","Psalm 119:50"],["I wait for the LORD; my soul does wait, and in His word I put my hope.","Psalm 130:5"],["Set a guard, O LORD, over my mouth; keep watch at the door of my lips.","Psalm 141:3"],["He is my steadfast love and my fortress, my stronghold and my deliverer. He is my shield, in whom I take refuge, who subdues peoples under me.","Psalm 144:2"],["The LORD is good to all; His compassion rests on all He has made.","Psalm 145:9"],["Blessed is he whose help is the God of Jacob, whose hope is in the LORD his God,","Psalm 146:5"],["For the LORD takes pleasure in His people; He adorns the afflicted with salvation.","Psalm 149:4"],["The fear of the LORD is the beginning of knowledge, but fools despise wisdom and discipline.","Proverbs 1:7"],["Never let loving devotion or faithfulness leave you; bind them around your neck, write them on the tablet of your heart.","Proverbs 3:3"],["Honor the LORD with your wealth and with the firstfruits of all your harvest;","Proverbs 3:9"],["Guard your heart with all diligence, for from it flow springs of life.","Proverbs 4:23"],["Idle hands make one poor, but diligent hands bring wealth.","Proverbs 10:4"],["A generous soul will prosper, and he who refreshes others will himself be refreshed.","Proverbs 11:25"],["Anxiety weighs down the heart of a man, but a good word cheers it up.","Proverbs 12:25"],["The slacker craves yet has nothing, but the soul of the diligent is fully satisfied.","Proverbs 13:4"],["There is profit in all labor, but mere talk leads only to poverty.","Proverbs 14:23"],["A gentle answer turns away wrath, but a harsh word stirs up anger.","Proverbs 15:1"],["Plans fail for lack of counsel, but with many advisers they succeed.","Proverbs 15:22"],["Pleasant words are a honeycomb, sweet to the soul and healing to the bones.","Proverbs 16:24"],["A friend loves at all times, and a brother is born for adversity.","Proverbs 17:17"],["The name of the LORD is a strong tower; the righteous run to it and are safe.","Proverbs 18:10"],["Many plans are in a man’s heart, but the purpose of the LORD will prevail.","Proverbs 19:21"],["Train up a child in the way he should go, and when he is old he will not depart from it.","Proverbs 22:6"],["Do you see a man skilled in his work? He will be stationed in the presence of kings; he will not stand before obscure men.","Proverbs 22:29"],["By wisdom a house is built and by understanding it is established; through knowledge its rooms are filled with every precious and beautiful treasure.","Proverbs 24:3–4"],["As iron sharpens iron, so one man sharpens another.","Proverbs 27:17"],["A wife of noble character, who can find? She is far more precious than rubies.","Proverbs 31:10"],["She opens her arms to the poor and reaches out her hands to the needy.","Proverbs 31:20"],["She opens her mouth with wisdom, and faithful instruction is on her tongue.","Proverbs 31:26"],["Her children rise up and call her blessed; her husband praises her as well:","Proverbs 31:28"],["Charm is deceptive and beauty is fleeting, but a woman who fears the LORD is to be praised.","Proverbs 31:30"],["For the LORD gives wisdom; from His mouth come knowledge and understanding.","Proverbs 2:6"],["Walk in the manner of the ant, O slacker; observe its ways and become wise.","Proverbs 6:6"],["The blessing of the LORD enriches, and He adds no sorrow to it.","Proverbs 10:22"],["When pride comes, disgrace follows, but with humility comes wisdom.","Proverbs 11:2"],["The one who works his land will have plenty of food, but whoever chases fantasies lacks judgment.","Proverbs 12:11"],["He who walks with the wise will become wise, but the companion of fools will be destroyed.","Proverbs 13:20"],["Every wise woman builds her house, but a foolish one tears it down with her own hands.","Proverbs 14:1"],["Whoever heeds instruction will find success, and blessed is he who trusts in the LORD.","Proverbs 16:20"],["A man’s steps are from the LORD, so how can anyone understand his own way?","Proverbs 20:24"],["For surely there is a future, and your hope will not be cut off.","Proverbs 23:18"],["He has made everything beautiful in its time. He has also set eternity in the hearts of men, yet they cannot fathom the work that God has done from beginning to end.","Ecclesiastes 3:11"],["Two are better than one, because they have a good return for their labor. For if one falls down, his companion can lift him up; but pity the one who falls without another to help him up!","Ecclesiastes 4:9–10"],["Whatever you find to do with your hands, do it with all your might, for in Sheol, where you are going, there is no work or planning or knowledge or wisdom.","Ecclesiastes 9:10"],["Sow your seed in the morning, and do not rest your hands in the evening, for you do not know which will succeed, whether this or that, or if both will equally prosper.","Ecclesiastes 11:6"],["You will keep in perfect peace the steadfast of mind, because he trusts in You.","Isaiah 26:3"],["For the Lord GOD, the Holy One of Israel, has said: “By repentance and rest you would be saved; your strength would lie in quiet confidence— but you were not willing.”","Isaiah 30:15"],["And whether you turn to the right or to the left, your ears will hear this command behind you: “This is the way. Walk in it.”","Isaiah 30:21"],["O LORD, be gracious to us! We wait for You. Be our strength every morning and our salvation in time of trouble.","Isaiah 33:2"],["The grass withers and the flowers fall, but the word of our God stands forever.","Isaiah 40:8"],["He tends His flock like a shepherd; He gathers the lambs in His arms and carries them close to His heart. He gently leads the nursing ewes.","Isaiah 40:11"],["He gives power to the faint and increases the strength of the weak.","Isaiah 40:29"],["Now this is what the LORD says— He who created you, O Jacob, and He who formed you, O Israel: “Do not fear, for I have redeemed you; I have called you by your name; you are Mine!”","Isaiah 43:1"],["When you pass through the waters, I will be with you; and when you go through the rivers, they will not overwhelm you. When you walk through the fire, you will not be scorched; the flames will not set you ablaze.","Isaiah 43:2"],["Behold, I am about to do something new; even now it is coming. Do you not see it? Indeed, I will make a way in the wilderness and streams in the desert.","Isaiah 43:19"],["Even to your old age, I will be the same, and I will bear you up when you turn gray. I have made you, and I will carry you; I will sustain you and deliver you.","Isaiah 46:4"],["“Can a woman forget her nursing child, or lack compassion for the son of her womb? Even if she could forget, I will not forget you!”","Isaiah 49:15"],["Behold, I have inscribed you on the palms of My hands; your walls are ever before Me.","Isaiah 49:16"],["Though the mountains may be removed and the hills may be shaken, My loving devotion will not depart from you, and My covenant of peace will not be broken, says the LORD, who has compassion on you.","Isaiah 54:10"],["Then all your sons will be taught by the LORD, and great will be their prosperity.","Isaiah 54:13"],["“For My thoughts are not your thoughts, neither are your ways My ways,” declares the LORD. “For as the heavens are higher than the earth, so My ways are higher than your ways and My thoughts than your thoughts.”","Isaiah 55:8–9"],["The LORD will always guide you; He will satisfy you in a sun-scorched land and strengthen your frame. You will be like a well-watered garden, like a spring whose waters never fail.","Isaiah 58:11"],["Arise, shine, for your light has come, and the glory of the LORD rises upon you.","Isaiah 60:1"],["to console the mourners in Zion— to give them a crown of beauty for ashes, the oil of joy for mourning, and a garment of praise for a spirit of despair. So they will be called oaks of righteousness, the planting of the LORD, that He may be glorified.","Isaiah 61:3"],["But now, O LORD, You are our Father; we are the clay, and You are the potter; we are all the work of Your hand.","Isaiah 64:8"],["Surely God is my salvation; I will trust and not be afraid. For the LORD GOD is my strength and my song, and He also has become my salvation.","Isaiah 12:2"],["O LORD, You are my God! I will exalt You; I will praise Your name. For You have worked wonders— plans formed long ago— in perfect faithfulness.","Isaiah 25:1"],["The work of righteousness will be peace; the service of righteousness will be quiet confidence forever.","Isaiah 32:17"],["For I am the LORD your God, who takes hold of your right hand and tells you: Do not fear, I will help you.","Isaiah 41:13"],["I will lead the blind by a way they did not know; I will guide them on unfamiliar paths. I will turn darkness into light before them and rough places into level ground. These things I will do for them, and I will not forsake them.","Isaiah 42:16"],["For I will pour water on the thirsty land, and currents on the dry ground. I will pour out My Spirit on your descendants, and My blessing on your offspring.","Isaiah 44:3"],["The Lord GOD has given Me the tongue of discipleship, to sustain the weary with a word. He awakens Me morning by morning; He awakens My ear to listen as a disciple.","Isaiah 50:4"],["How beautiful on the mountains are the feet of those who bring good news, who proclaim peace, who bring good tidings, who proclaim salvation, who say to Zion, “Your God reigns!”","Isaiah 52:7"],["Even before they call, I will answer, and while they are still speaking, I will hear.","Isaiah 65:24"],["As a mother comforts her son, so will I comfort you, and you will be consoled over Jerusalem.","Isaiah 66:13"],["But blessed is the man who trusts in the LORD, whose confidence is in Him. He is like a tree planted by the waters that sends out its roots toward the stream. It does not fear when the heat comes, and its leaves are always green. It does not worry in a year of drought, nor does it cease to produce fruit.","Jeremiah 17:7–8"],["Then you will call upon Me and come and pray to Me, and I will listen to you. You will seek Me and find Me when you search for Me with all your heart.","Jeremiah 29:12–13"],["The LORD appeared to us in the past, saying: “I have loved you with an everlasting love; therefore I have drawn you with loving devotion.”","Jeremiah 31:3"],["“Oh, Lord GOD! You have made the heavens and the earth by Your great power and outstretched arm. Nothing is too difficult for You!”","Jeremiah 32:17"],["Call to Me, and I will answer and show you great and unsearchable things you do not know.","Jeremiah 33:3"],["The LORD is good to those who wait for Him, to the soul who seeks Him.","Lamentations 3:25"],["“The LORD is my portion,” says my soul, “therefore I will hope in Him.”","Lamentations 3:24"],["The LORD your God is among you; He is mighty to save. He will rejoice over you with gladness; He will quiet you with His love; He will rejoice over you with singing.","Zephaniah 3:17"],["He has shown you, O man, what is good. And what does the LORD require of you but to act justly, to love mercy, and to walk humbly with your God?","Micah 6:8"],["But as for me, I will look to the LORD; I will wait for the God of my salvation. My God will hear me.","Micah 7:7"],["The LORD is good, a stronghold in the day of distress; He cares for those who trust in Him.","Nahum 1:7"],["GOD the Lord is my strength; He makes my feet like those of a deer; He makes me walk upon the heights! For the choirmaster. With stringed instruments.","Habakkuk 3:19"],["For the vision awaits an appointed time; it testifies of the end and does not lie. Though it lingers, wait for it, since it will surely come and will not delay.","Habakkuk 2:3"],["I will repay you for the years eaten by locusts— the swarming locust, the young locust, the destroying locust, and the devouring locust— My great army that I sent against you.","Joel 2:25"],["Bring the full tithe into the storehouse, so that there may be food in My house. Test Me in this,” says the LORD of Hosts. “See if I will not open the windows of heaven and pour out for you blessing without measure.","Malachi 3:10"],["But now be strong, O Zerubbabel, declares the LORD. Be strong, O Joshua son of Jehozadak, the high priest. And be strong, all you people of the land, declares the LORD. Work! For I am with you, declares the LORD of Hosts.","Haggai 2:4"],["So he said to me, “This is the word of the LORD to Zerubbabel: Not by might nor by power, but by My Spirit, says the LORD of Hosts.”","Zechariah 4:6"],["And you shall love the LORD your God with all your heart and with all your soul and with all your strength.","Deuteronomy 6:5"],["These words I am commanding you today are to be upon your hearts. And you shall teach them diligently to your children and speak of them when you sit at home and when you walk along the road, when you lie down and when you get up.","Deuteronomy 6:6–7"],["Know therefore that the LORD your God is God, the faithful God who keeps His covenant of loving devotion for a thousand generations of those who love Him and keep His commandments.","Deuteronomy 7:9"],["And all these blessings will come upon you and overtake you, if you will obey the voice of the LORD your God:","Deuteronomy 28:2"],["The eternal God is your dwelling place, and underneath are the everlasting arms. He drives out the enemy before you, giving the command, ‘Destroy him!’","Deuteronomy 33:27"],["Be strong and courageous; do not be afraid or terrified of them, for it is the LORD your God who goes with you; He will never leave you nor forsake you.","Deuteronomy 31:6"],["This Book of the Law must not depart from your mouth; meditate on it day and night, so that you may be careful to do everything written in it. For then you will prosper and succeed in all you do.","Joshua 1:8"],["But if it is unpleasing in your sight to serve the LORD, then choose for yourselves this day whom you will serve, whether the gods your fathers served beyond the Euphrates, or the gods of the Amorites in whose land you are living. As for me and my house, we will serve the LORD!","Joshua 24:15"],["The LORD will fight for you; you need only to be still.","Exodus 14:14"],["The LORD is my strength and my song, and He has become my salvation. He is my God, and I will praise Him, my father’s God, and I will exalt Him.","Exodus 15:2"],["And the LORD answered, “My Presence will go with you, and I will give you rest.”","Exodus 33:14"],["God is not a man, that He should lie, or a son of man, that He should change His mind. Does He speak and not act? Does He promise and not fulfill?","Numbers 23:19"],["I prayed for this boy, and since the LORD has granted me what I asked of Him,","1 Samuel 1:27"],["But the LORD said to Samuel, “Do not consider his appearance or height, for I have rejected him; the LORD does not see as man does. For man sees the outward appearance, but the LORD sees the heart.”","1 Samuel 16:7"],["As for God, His way is perfect; the word of the LORD is flawless. He is a shield to all who take refuge in Him.","2 Samuel 22:31"],["Seek out the LORD and His strength; seek His face always.","1 Chronicles 16:11"],["Give thanks to the LORD, for He is good; His loving devotion endures forever.","1 Chronicles 16:34"],["David also said to Solomon his son, “Be strong and courageous, and do it. Do not be afraid or discouraged, for the LORD God, my God, is with you. He will neither fail you nor forsake you before all the work for the service of the house of the LORD is finished.”","1 Chronicles 28:20"],["But as for you, be strong; do not be discouraged, for your work will be rewarded.","2 Chronicles 15:7"],["For the eyes of the LORD roam to and fro over all the earth, to show Himself strong on behalf of those whose hearts are fully devoted to Him. You have acted foolishly in this matter. From now on, therefore, you will be at war.","2 Chronicles 16:9"],["Then Nehemiah told them, “Go and eat what is rich, drink what is sweet, and send out portions to those who have nothing prepared, since today is holy to our Lord. Do not grieve, for the joy of the LORD is your strength.”","Nehemiah 8:10"],["But Ruth replied: “Do not urge me to leave you or to turn from following you. For wherever you go, I will go, and wherever you live, I will live; your people will be my people, and your God will be my God.”","Ruth 1:16"],["For if you remain silent at this time, relief and deliverance for the Jews will arise from another place, but you and your father’s house will perish. And who knows if perhaps you have come to the kingdom for such a time as this?","Esther 4:14"],["He will yet fill your mouth with laughter, and your lips with a shout of joy.","Job 8:21"],["But I know that my Redeemer lives, and in the end He will stand upon the earth.","Job 19:25"],["“I know that You can do all things and that no plan of Yours can be thwarted.”","Job 42:2"],["So God created man in His own image; in the image of God He created him; male and female He created them.","Genesis 1:27"],["Look, I am with you, and I will watch over you wherever you go, and I will bring you back to this land. For I will not leave you until I have done what I have promised you.","Genesis 28:15"],["As for you, what you intended against me for evil, God intended for good, in order to accomplish a day like this—to preserve the lives of many people.","Genesis 50:20"],["You are the light of the world. A city on a hill cannot be hidden.","Matthew 5:14"],["In the same way, let your light shine before men, that they may see your good deeds and glorify your Father in heaven.","Matthew 5:16"],["Look at the birds of the air: They do not sow or reap or gather into barns—and yet your heavenly Father feeds them. Are you not much more valuable than they?","Matthew 6:26"],["Therefore do not worry about tomorrow, for tomorrow will worry about itself. Today has enough trouble of its own.","Matthew 6:34"],["Ask, and it will be given to you; seek, and you will find; knock, and the door will be opened to you.","Matthew 7:7"],["Therefore everyone who hears these words of Mine and acts on them is like a wise man who built his house on the rock.","Matthew 7:24"],["So do not be afraid; you are worth more than many sparrows.","Matthew 10:31"],["But Jesus said, “Let the little children come to Me, and do not hinder them! For the kingdom of heaven belongs to such as these.”","Matthew 19:14"],["Jesus looked at them and said, “With man this is impossible, but with God all things are possible.”","Matthew 19:26"],["Jesus declared, “‘Love the Lord your God with all your heart and with all your soul and with all your mind.’”","Matthew 22:37"],["His master replied, ‘Well done, good and faithful servant! You have been faithful with a few things; I will put you in charge of many things. Enter into the joy of your master!’","Matthew 25:21"],["and teaching them to obey all that I have commanded you. And surely I am with you always, even to the end of the age.","Matthew 28:20"],["Blessed are the pure in heart, for they will see God.","Matthew 5:8"],["Blessed are the peacemakers, for they will be called sons of God.","Matthew 5:9"],["For where your treasure is, there your heart will be also.","Matthew 6:21"],["“If You can?” echoed Jesus. “All things are possible to him who believes!”","Mark 9:23"],["Jesus looked at them and said, “With man this is impossible, but not with God. For all things are possible with God.”","Mark 10:27"],["Therefore I tell you, whatever you ask for in prayer, believe that you have received it, and it will be yours.","Mark 11:24"],["Love the Lord your God with all your heart and with all your soul and with all your mind and with all your strength. The second is this: ‘Love your neighbor as yourself.’ No other commandment is greater than these.","Mark 12:30–31"],["And He said to them, “Come with Me privately to a solitary place, and let us rest for a while.” For many people were coming and going, and they did not even have time to eat.","Mark 6:31"],["For no word from God will ever fail.","Luke 1:37"],["Blessed is she who has believed that the Lord’s word to her will be fulfilled.","Luke 1:45"],["Do to others as you would have them do to you.","Luke 6:31"],["Give, and it will be given to you. A good measure, pressed down, shaken together, and running over will be poured into your lap. For with the measure you use, it will be measured back to you.","Luke 6:38"],["“Martha, Martha,” the Lord replied, “you are worried and upset about many things. But only one thing is necessary. Mary has chosen the good portion, and it will not be taken away from her.”","Luke 10:41–42"],["Who of you by worrying can add a single hour to his life?","Luke 12:25"],["Whoever is faithful with very little will also be faithful with much, and whoever is dishonest with very little will also be dishonest with much.","Luke 16:10"],["But Jesus said, “What is impossible with man is possible with God.”","Luke 18:27"],["The Light shines in the darkness, and the darkness has not overcome it.","John 1:5"],["For God so loved the world that He gave His one and only Son, that everyone who believes in Him shall not perish but have eternal life.","John 3:16"],["Once again, Jesus spoke to the people and said, “I am the light of the world. Whoever follows Me will never walk in the darkness, but will have the light of life.”","John 8:12"],["The thief comes only to steal and kill and destroy. I have come that they may have life, and have it in all its fullness.","John 10:10"],["My sheep listen to My voice; I know them, and they follow Me.","John 10:27"],["Jesus said to her, “I am the resurrection and the life. Whoever believes in Me will live, even though he dies.”","John 11:25"],["A new commandment I give you: Love one another. As I have loved you, so you also must love one another.","John 13:34"],["“Do not let your hearts be troubled. You believe in God; believe in Me as well.”","John 14:1"],["Jesus answered, “I am the way and the truth and the life. No one comes to the Father except through Me.”","John 14:6"],["I am the vine and you are the branches. The one who remains in Me, and I in him, will bear much fruit. For apart from Me you can do nothing.","John 15:5"],["This is My commandment, that you love one another as I have loved you.","John 15:12"],["I have told you these things so that in Me you may have peace. In the world you will have tribulation. But take courage; I have overcome the world!","John 16:33"],["You did not choose Me, but I chose you. And I appointed you to go and bear fruit—fruit that will remain—so that whatever you ask the Father in My name, He will give you.","John 15:16"],["Jesus answered, “I am the bread of life. Whoever comes to Me will never hunger, and whoever believes in Me will never thirst.”","John 6:35"],["But you will receive power when the Holy Spirit comes upon you, and you will be My witnesses in Jerusalem, and in all Judea and Samaria, and to the ends of the earth.","Acts 1:8"],["They devoted themselves to the apostles teaching and to the fellowship, to the breaking of bread and to prayer.","Acts 2:42"],["But I consider my life of no value to me, if only I may finish my course and complete the ministry I have received from the Lord Jesus—the ministry of testifying to the good news of God’s grace.","Acts 20:24"],["In everything, I showed you that by this kind of hard work we must help the weak, remembering the words of the Lord Jesus Himself: ‘It is more blessed to give than to receive.’","Acts 20:35"],["Not only that, but we also rejoice in our sufferings, because we know that suffering produces perseverance; perseverance, character; and character, hope.","Romans 5:3–4"],["But God proves His love for us in this: While we were still sinners, Christ died for us.","Romans 5:8"],["Therefore, there is now no condemnation for those who are in Christ Jesus.","Romans 8:1"],["What then shall we say in response to these things? If God is for us, who can be against us?","Romans 8:31"],["For I am convinced that neither death nor life, neither angels nor principalities, neither the present nor the future, nor any powers, neither height nor depth, nor anything else in all creation, will be able to separate us from the love of God that is in Christ Jesus our Lord.","Romans 8:38–39"],["that if you confess with your mouth, “Jesus is Lord,” and believe in your heart that God raised Him from the dead, you will be saved.","Romans 10:9"],["Do not be conformed to this world, but be transformed by the renewing of your mind. Then you will be able to test and approve what is the good, pleasing, and perfect will of God.","Romans 12:2"],["Be devoted to one another in brotherly love. Outdo yourselves in honoring one another.","Romans 12:10"],["Do not let your zeal subside; keep your spiritual fervor, serving the Lord.","Romans 12:11"],["Be joyful in hope, patient in affliction, persistent in prayer.","Romans 12:12"],["Now may the God of hope fill you with all joy and peace as you believe in Him, so that you may overflow with hope by the power of the Holy Spirit.","Romans 15:13"],["If it is possible on your part, live at peace with everyone.","Romans 12:18"],["Now may the God who gives endurance and encouragement grant you harmony with one another in Christ Jesus,","Romans 15:5"],["Rather, as it is written: “No eye has seen, no ear has heard, no heart has imagined, what God has prepared for those who love Him.”","1 Corinthians 2:9"],["No temptation has seized you except what is common to man. And God is faithful; He will not let you be tempted beyond what you can bear. But when you are tempted, He will also provide an escape, so that you can stand up under it.","1 Corinthians 10:13"],["So whether you eat or drink or whatever you do, do it all to the glory of God.","1 Corinthians 10:31"],["Love is patient, love is kind. It does not envy, it does not boast, it is not proud.","1 Corinthians 13:4"],["It bears all things, believes all things, hopes all things, endures all things.","1 Corinthians 13:7"],["And now these three remain: faith, hope, and love; but the greatest of these is love.","1 Corinthians 13:13"],["Therefore, my beloved brothers, be steadfast and immovable. Always excel in the work of the Lord, because you know that your labor in the Lord is not in vain.","1 Corinthians 15:58"],["Do everything in love.","1 Corinthians 16:14"],["Be on the alert. Stand firm in the faith. Be men of courage. Be strong.","1 Corinthians 16:13"],["Therefore we do not lose heart. Though our outer self is wasting away, yet our inner self is being renewed day by day.","2 Corinthians 4:16"],["So we fix our eyes not on what is seen, but on what is unseen. For what is seen is temporary, but what is unseen is eternal.","2 Corinthians 4:18"],["For we walk by faith, not by sight.","2 Corinthians 5:7"],["Therefore if anyone is in Christ, he is a new creation. The old has passed away. Behold, the new has come!","2 Corinthians 5:17"],["Each one should give what he has decided in his heart to give, not out of regret or compulsion. For God loves a cheerful giver.","2 Corinthians 9:7"],["And God is able to make all grace abound to you, so that in all things, at all times, having all that you need, you will abound in every good work.","2 Corinthians 9:8"],["Blessed be the God and Father of our Lord Jesus Christ, the Father of compassion and the God of all comfort, who comforts us in all our troubles, so that we can comfort those in any trouble with the comfort we ourselves have received from God.","2 Corinthians 1:3–4"],["I have been crucified with Christ, and I no longer live, but Christ lives in me. The life I live in the body, I live by faith in the Son of God, who loved me and gave Himself up for me.","Galatians 2:20"],["It is for freedom that Christ has set us free. Stand firm, then, and do not be encumbered once more by a yoke of slavery.","Galatians 5:1"],["For you, brothers, were called to freedom; but do not use your freedom as an opportunity for the flesh. Rather, serve one another in love.","Galatians 5:13"],["But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, and self-control. Against such things there is no law.","Galatians 5:22–23"],["Carry one another’s burdens, and in this way you will fulfill the law of Christ.","Galatians 6:2"],["For it is by grace you have been saved through faith, and this not from yourselves; it is the gift of God,","Ephesians 2:8"],["For we are God’s workmanship, created in Christ Jesus to do good works, which God prepared in advance as our way of life.","Ephesians 2:10"],["Now to Him who is able to do immeasurably more than all we ask or imagine, according to His power that is at work within us,","Ephesians 3:20"],["with all humility and gentleness, with patience, bearing with one another in love,","Ephesians 4:2"],["Let no unwholesome talk come out of your mouths, but only what is helpful for building up the one in need and bringing grace to those who listen.","Ephesians 4:29"],["Be kind and tenderhearted to one another, forgiving each other just as in Christ God forgave you.","Ephesians 4:32"],["Pay careful attention, then, to how you walk, not as unwise but as wise, redeeming the time, because the days are evil.","Ephesians 5:15–16"],["Finally, be strong in the Lord and in His mighty power.","Ephesians 6:10"],["Blessed be the God and Father of our Lord Jesus Christ, who has blessed us in Christ with every spiritual blessing in the heavenly realms.","Ephesians 1:3"],["I ask that out of the riches of His glory He may strengthen you with power through His Spirit in your inner being,","Ephesians 3:16"],["I thank my God every time I remember you.","Philippians 1:3"],["Do nothing out of selfish ambition or empty pride, but in humility consider others more important than yourselves.","Philippians 2:3"],["Each of you should look not only to your own interests, but also to the interests of others.","Philippians 2:4"],["For it is God who works in you to will and to act on behalf of His good purpose.","Philippians 2:13"],["Do everything without complaining or arguing,","Philippians 2:14"],["Brothers, I do not consider myself yet to have taken hold of it. But one thing I do: Forgetting what is behind and straining toward what is ahead, I press on toward the goal to win the prize of God’s heavenly calling in Christ Jesus.","Philippians 3:13–14"],["Rejoice in the Lord always. I will say it again: Rejoice!","Philippians 4:4"],["Finally, brothers, whatever is true, whatever is honorable, whatever is right, whatever is pure, whatever is lovely, whatever is admirable—if anything is excellent or praiseworthy—think on these things.","Philippians 4:8"],["I am not saying this out of need, for I have learned to be content regardless of my circumstances.","Philippians 4:11"],["And my God will supply all your needs according to His glorious riches in Christ Jesus.","Philippians 4:19"],["He is before all things, and in Him all things hold together.","Colossians 1:17"],["Therefore, just as you have received Christ Jesus as Lord, continue to walk in Him, rooted and built up in Him, established in the faith as you were taught, and overflowing with thankfulness.","Colossians 2:6–7"],["Set your minds on things above, not on earthly things.","Colossians 3:2"],["Therefore, as the elect of God, holy and beloved, clothe yourselves with hearts of compassion, kindness, humility, gentleness, and patience.","Colossians 3:12"],["And over all these virtues put on love, which is the bond of perfect unity.","Colossians 3:14"],["Let the peace of Christ rule in your hearts, for to this you were called as members of one body. And be thankful.","Colossians 3:15"],["And whatever you do, in word or deed, do it all in the name of the Lord Jesus, giving thanks to God the Father through Him.","Colossians 3:17"],["Devote yourselves to prayer, being watchful and thankful,","Colossians 4:2"],["Let your speech always be gracious, seasoned with salt, so that you may know how to answer everyone.","Colossians 4:6"],["and to aspire to live quietly, to attend to your own matters, and to work with your own hands, as we instructed you.","1 Thessalonians 4:11"],["Therefore encourage and build one another up, just as you are already doing.","1 Thessalonians 5:11"],["Rejoice at all times. Pray without ceasing. Give thanks in every circumstance, for this is God’s will for you in Christ Jesus.","1 Thessalonians 5:16–18"],["The One who calls you is faithful, and He will do it.","1 Thessalonians 5:24"],["But the Lord is faithful, and He will strengthen you and guard you from the evil one.","2 Thessalonians 3:3"],["But as for you, brothers, do not grow weary in well-doing.","2 Thessalonians 3:13"],["Now may the Lord of peace Himself give you peace at all times and in every way. The Lord be with all of you.","2 Thessalonians 3:16"],["Let no one despise your youth, but set an example for the believers in speech, in conduct, in love, in faith, in purity.","1 Timothy 4:12"],["Of course, godliness with contentment is great gain.","1 Timothy 6:6"],["Make every effort to present yourself approved to God, an unashamed workman who accurately handles the word of truth.","2 Timothy 2:15"],["All Scripture is God-breathed and is useful for instruction, for conviction, for correction, and for training in righteousness, so that the man of God may be complete, fully equipped for every good work.","2 Timothy 3:16–17"],["I have fought the good fight, I have finished the race, I have kept the faith.","2 Timothy 4:7"],["In everything, show yourself to be an example by doing good works. In your teaching show integrity, dignity,","Titus 2:7"],["He saved us, not by the righteous deeds we had done, but according to His mercy, through the washing of new birth and renewal by the Holy Spirit.","Titus 3:5"],["For the word of God is living and active. Sharper than any double-edged sword, it pierces even to dividing soul and spirit, joints and marrow. It judges the thoughts and intentions of the heart.","Hebrews 4:12"],["Let us then approach the throne of grace with confidence, so that we may receive mercy and find grace to help us in our time of need.","Hebrews 4:16"],["We have this hope as an anchor for the soul, firm and secure. It enters the inner sanctuary behind the curtain,","Hebrews 6:19"],["Let us hold resolutely to the hope we profess, for He who promised is faithful.","Hebrews 10:23"],["And let us consider how to spur one another on to love and good deeds.","Hebrews 10:24"]];
+
+const RESET=['Look back at last week: what got done?','Move unfinished tasks to new dates','Check next week\'s calendar','Pick the CraigAds goal for the week','Plan meals and groceries','Tidy the desk and inbox','Set this week\'s Top 3'];
+
+function seed(){
+  const t=new Date(),d=n=>iso(addDays(t,n));
+  // next Monday
+  const nm=addDays(t,((8-t.getDay())%7)||7);const w=n=>iso(addDays(nm,n));
+  const T=(list,title,cat,pri,due)=>({id:uid(),list,title,cat,pri,due,done:false,ex:true});
+  const E=(date,time,title,kind)=>({id:uid(),date,time,title,kind,ex:true});
+  return{
+    name:'Khristine',
+    tasks:[
+      T('work','Send weekly ad report to client','Clients','high',d(0)),
+      T('work','Draft 3 Facebook ad hooks','Ads','med',d(0)),
+      T('work','Reply to inquiry DMs','Sales','med',d(-1)),
+      T('work','Schedule next week\'s content','Content','low',d(2)),
+      T('work','Update invoice tracker','Admin','low',d(4)),
+      T('life','Buy diapers and wipes','Baby','high',d(0)),
+      T('life','Prep baby food for the week','Baby','med',d(1)),
+      T('life','Laundry: fold and put away','Home','low',d(0)),
+      T('life','Pay electric bill','Money','high',d(3)),
+      T('life','Quiet time and journal','Faith','med','')
+    ],
+    events:[
+      E(d(0),'10:00','Client check-in call','work'),
+      E(d(0),'15:00','Baby\'s nap + content batching','life'),
+      E(d(1),'09:30','Ads strategy session','work'),
+      E(d(2),'17:00','Grocery run','life'),
+      E(w(0),'09:00','CraigAds weekly planning','work'),
+      E(w(1),'14:00','Pediatric check-up','life'),
+      E(w(3),'11:00','New client onboarding','work'),
+      E(w(5),'10:00','Family day','life')
+    ],
+    big:{},notes:'',habits:['Daily Devotion','Afternoon walks','Drink 8 glasses of water','Move my body','Inbox zero','Screen-free time with baby'],mig:1,
+    hlog:{},reset:{},examples:true
+  };
+}
+
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!S.tasks)S=seed();
+// one-time update for planners saved before the habit rename
+if(!S.mig){S.habits=(S.habits||[]).map(h=>h==='Bible reading'?'Daily Devotion':h);
+  if(!S.habits.includes('Afternoon walks'))S.habits.splice(1,0,'Afternoon walks');
+  Object.values(S.hlog||{}).forEach(d=>{if('Bible reading' in d){d['Daily Devotion']=d['Bible reading'];delete d['Bible reading']}});S.mig=1}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+let toastT;function toast(m){const el=$('#toast');el.textContent=m;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2200)}
+
+/* ---------- tasks ---------- */
+const filt={work:'open',life:'open'};
+function taskHTML(t,showList){
+  const td=today(),late=t.due&&t.due<td&&!t.done;
+  const chips=[];
+  if(showList)chips.push(`<span class="chip ${t.list}">${t.list==='work'?'CraigAds':'Life'}</span>`);
+  if(t.cat)chips.push(`<span class="chip">${esc(t.cat)}</span>`);
+  if(t.pri==='high')chips.push('<span class="chip high">High</span>');else if(t.pri==='med')chips.push('<span class="chip med">Medium</span>');
+  if(t.due)chips.push(late?`<span class="chip late">Overdue · ${fmtShort(t.due)}</span>`:`<span class="chip">${t.due===td?'Today':fmtShort(t.due)}</span>`);
+  if(t.ex)chips.push('<span class="chip ex">example</span>');
+  return `<li class="task${t.done?' done':''}"><input type="checkbox" class="check ${t.list}" data-toggle="${t.id}" ${t.done?'checked':''} aria-label="Done: ${esc(t.title)}"><div><div class="title">${esc(t.title)}</div><div class="meta">${chips.join('')}</div></div><button class="del" data-del="${t.id}" aria-label="Delete ${esc(t.title)}">×</button></li>`;
+}
+const priRank={high:0,med:1,low:2};
+function sortTasks(a,b){if(a.done!==b.done)return a.done?1:-1;const ad=a.due||'9999',bd=b.due||'9999';if(ad!==bd)return ad<bd?-1:1;return priRank[a.pri]-priRank[b.pri]}
+function renderList(list){
+  const td=today(),wk=iso(addDays(new Date(),7));
+  const all=S.tasks.filter(t=>t.list===list);
+  const f=filt[list];
+  let items=all.filter(t=>{
+    if(f==='open')return!t.done;if(f==='done')return t.done;
+    if(f==='today')return!t.done&&t.due&&t.due<=td;
+    if(f==='week')return!t.done&&t.due&&t.due<=wk;
+    if(f.startsWith('cat:'))return!t.done&&t.cat===f.slice(4);
+    return true});
+  items.sort(sortTasks);
+  $('#'+list+'List').innerHTML=items.length?items.map(t=>taskHTML(t,false)).join(''):'<li class="empty">Nothing here. Add a task above.</li>';
+  const open=all.filter(t=>!t.done).length;
+  $('#'+list+'Count').textContent=`${open} open · ${all.length-open} done`;
+  const opts=[['open','Open'],['today','Due today'],['week','Next 7 days'],...CATS[list].map(c=>['cat:'+c,c]),['done','Done'],['all','All']];
+  $('#'+list+'Filters').innerHTML=opts.map(([v,l])=>`<button class="pill" data-filter="${list}|${v}" aria-pressed="${f===v}">${l}</button>`).join('');
+}
+function renderToday(){
+  const td=today();
+  const items=S.tasks.filter(t=>t.due&&t.due<=td&&(!t.done||t.doneOn===td)).sort(sortTasks);
+  $('#todayTasks').innerHTML=items.length?items.map(t=>taskHTML(t,true)).join(''):'<li class="empty">All clear for today. Add tasks with today\'s date in CraigAds or Life.</li>';
+  const doneN=items.filter(t=>t.done).length,left=items.length-doneN;
+  const late=S.tasks.filter(t=>!t.done&&t.due&&t.due<td).length;
+  $('#statLeft').textContent=left;$('#statLate').textContent=late;
+  const pct=items.length?Math.round(doneN/items.length*100):0;
+  $('#progBar').style.width=pct+'%';
+  $('#progText').textContent=items.length?`${doneN} of ${items.length} done today (${pct}%)`:'';
+}
+
+/* ---------- events ---------- */
+function evHTML(e,withDay){
+  return `<li class="ev ${e.kind}"><time>${withDay?`<span class="day">${parse(e.date).toLocaleDateString(undefined,{weekday:'short',day:'numeric'})}</span><br>`:''}${fmtTime(e.time)}</time><div class="t">${esc(e.title)}${e.ex?' <span class="chip ex">example</span>':''}</div><button class="del" style="opacity:.6" data-delev="${e.id}" aria-label="Delete ${esc(e.title)}">×</button></li>`;
+}
+const evSort=(a,b)=>(a.date+(a.time||'00:00'))<(b.date+(b.time||'00:00'))?-1:1;
+function nextWeekRange(){const t=new Date();const mon=addDays(t,((8-t.getDay())%7)||7);return[iso(mon),iso(addDays(mon,6))]}
+function renderEvents(){
+  const td=today();
+  const te=S.events.filter(e=>e.date===td).sort(evSort);
+  $('#statEvents').textContent=te.length;
+  $('#todayEvents').innerHTML=te.length?te.map(e=>evHTML(e)).join(''):'<li class="empty">No events today.</li>';
+  const[a,b]=nextWeekRange();
+  $('#nextWeekRange').textContent=fmtShort(a)+' – '+fmtShort(b);
+  const nw=S.events.filter(e=>e.date>=a&&e.date<=b).sort(evSort);
+  const nwTasks=S.tasks.filter(t=>!t.done&&t.due>=a&&t.due<=b);
+  let html=nw.map(e=>evHTML(e,true)).join('');
+  if(nwTasks.length)html+=`<li class="small muted" style="padding:6px 4px">Plus ${nwTasks.length} task${nwTasks.length>1?'s':''} due next week: ${nwTasks.slice(0,4).map(t=>esc(t.title)).join(', ')}${nwTasks.length>4?'…':''}</li>`;
+  const out=html||'<li class="empty">Nothing planned for next week yet.</li>';
+  $('#nextWeek').innerHTML=out;$('#calNextWeek').innerHTML=out;
+}
+
+/* ---------- calendar ---------- */
+let calMonth=new Date();calMonth.setDate(1);let selDay=today();
+function renderCal(){
+  const y=calMonth.getFullYear(),m=calMonth.getMonth();
+  $('#calTitle').textContent=calMonth.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+  const first=new Date(y,m,1),start=addDays(first,-first.getDay());
+  let html=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="dow">${d}</div>`).join('');
+  const td=today();
+  for(let i=0;i<42;i++){
+    const d=addDays(start,i),k=iso(d);
+    if(i>=35&&d.getMonth()!==m)break;
+    const evs=S.events.filter(e=>e.date===k).sort(evSort);
+    const cls=['cell',d.getMonth()!==m?'other':'',k===td?'today':'',k===selDay?'sel':''].join(' ');
+    html+=`<button class="${cls}" data-day="${k}" aria-label="${d.toDateString()}, ${evs.length} events"><span class="n">${d.getDate()}</span>${evs.slice(0,2).map(e=>`<span class="e ${e.kind}">${esc(e.title)}</span>`).join('')}${evs.length>2?`<span class="more">+${evs.length-2} more</span>`:''}<span class="dots">${evs.map(e=>`<i class="${e.kind}"></i>`).join('')}</span></button>`;
+  }
+  $('#cal').innerHTML=html;
+  $('#dayTitle').textContent=parse(selDay).toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  const de=S.events.filter(e=>e.date===selDay).sort(evSort);
+  $('#dayEvents').innerHTML=de.length?de.map(e=>evHTML(e)).join(''):'<li class="empty">No events on this day.</li>';
+}
+
+/* ---------- habits ---------- */
+function weekDays(){const t=new Date(),s=addDays(t,-((t.getDay()+6)%7));return[...Array(7)].map((_,i)=>iso(addDays(s,i)))}
+function renderHabits(){
+  const days=weekDays(),td=today();
+  let h='<table><thead><tr><th></th>'+days.map(d=>`<th class="${d===td?'today':''}">${parse(d).toLocaleDateString(undefined,{weekday:'narrow'})}</th>`).join('')+'</tr></thead><tbody>';
+  S.habits.forEach((hb,i)=>{h+=`<tr><td>${esc(hb)}</td>`+days.map(d=>{const on=!!(S.hlog[d]&&S.hlog[d][hb]);return`<td><button class="dot" data-habit="${i}|${d}" aria-pressed="${on}" aria-label="${esc(hb)} on ${d}"></button></td>`}).join('')+'</tr>'});
+  $('#habits').innerHTML=h+'</tbody></table>';
+}
+
+/* ---------- reset ---------- */
+function renderReset(){
+  $('#reset').innerHTML=RESET.map((r,i)=>`<li class="task${S.reset[i]?' done':''}"><input type="checkbox" class="check life" data-reset="${i}" ${S.reset[i]?'checked':''} aria-label="${esc(r)}"><div class="title">${esc(r)}</div><span></span></li>`).join('');
+}
+
+/* ---------- header ---------- */
+function renderHeader(){
+  const n=new Date(),h=n.getHours();
+  const g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+  $('#greeting').textContent=`${g}, ${S.name||'friend'}`;
+  $('#brandName').textContent=(S.name?S.name+"'s":'My')+' Planner';
+  $('#todayDate').textContent=n.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const start=new Date(n.getFullYear(),0,1),doy=Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-start)/864e5);
+  const wk=Math.ceil((doy+start.getDay()+1)/7);
+  $('#weekLabel').textContent='Week '+wk+' of '+n.getFullYear();
+  const v=VERSES[doy%VERSES.length];$('#verseText').textContent=v[0];$('#verseRef').textContent=v[1]+' (BSB)';$('#verseNiv').href='https://www.biblegateway.com/passage/?search='+encodeURIComponent(v[1].replace('–','-'))+'&version=NIV';
+  const big=S.big[today()]||[];[0,1,2].forEach(i=>{const el=$('#big'+i);if(document.activeElement!==el)el.value=big[i]||''});
+  $('#exampleBanner').hidden=!(S.tasks.some(t=>t.ex)||S.events.some(e=>e.ex));
+}
+
+function renderAll(){renderHeader();renderToday();renderList('work');renderList('life');renderEvents();renderCal();renderHabits();renderReset();$('#notes').value=S.notes||''}
+
+/* ---------- selects ---------- */
+['work','life'].forEach(l=>{$('#'+l+'Cat').innerHTML=CATS[l].map(c=>`<option>${c}</option>`).join('');$('#'+l+'Due').value=today()});
+
+/* ---------- events wiring ---------- */
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.toggle){const k=S.tasks.find(x=>x.id===t.dataset.toggle);if(k){k.done=t.checked;k.doneOn=t.checked?today():null;save();if(t.checked)toast('Nice! Checked off.');renderToday();renderList('work');renderList('life');renderEvents()}}
+  if(t.dataset.reset!==undefined){S.reset[t.dataset.reset]=t.checked;save();renderReset()}
+});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.view||b.dataset.goto)show(b.dataset.view||b.dataset.goto);
+  if(b.dataset.del){S.tasks=S.tasks.filter(x=>x.id!==b.dataset.del);save();renderAll();toast('Task deleted')}
+  if(b.dataset.delev){S.events=S.events.filter(x=>x.id!==b.dataset.delev);save();renderAll();toast('Event deleted')}
+  if(b.dataset.filter){const[l,v]=b.dataset.filter.split('|');filt[l]=v;renderList(l)}
+  if(b.dataset.day){selDay=b.dataset.day;const d=parse(selDay);if(d.getMonth()!==calMonth.getMonth()){calMonth=new Date(d.getFullYear(),d.getMonth(),1)}renderCal()}
+  if(b.dataset.habit){const[i,d]=b.dataset.habit.split('|');const hb=S.habits[i];S.hlog[d]=S.hlog[d]||{};S.hlog[d][hb]=!S.hlog[d][hb];save();renderHabits()}
+  if(b.dataset.min){setTimer(+b.dataset.min);document.querySelectorAll('[data-min]').forEach(x=>x.setAttribute('aria-pressed',x===b))}
+});
+document.querySelectorAll('form.add[data-list]').forEach(f=>f.addEventListener('submit',e=>{
+  e.preventDefault();const l=f.dataset.list,title=$('#'+l+'Title').value.trim();if(!title)return;
+  S.tasks.push({id:uid(),list:l,title,cat:$('#'+l+'Cat').value,pri:$('#'+l+'Pri').value,due:$('#'+l+'Due').value,done:false});
+  save();$('#'+l+'Title').value='';renderAll();toast('Task added');$('#'+l+'Title').focus();
+}));
+$('#evForm').addEventListener('submit',e=>{e.preventDefault();const title=$('#evTitle').value.trim();if(!title)return;
+  S.events.push({id:uid(),date:selDay,time:$('#evTime').value,title,kind:$('#evKind').value});save();$('#evTitle').value='';$('#evTime').value='';renderAll();toast('Event added')});
+$('#calPrev').onclick=()=>{calMonth.setMonth(calMonth.getMonth()-1);renderCal()};
+$('#calNext').onclick=()=>{calMonth.setMonth(calMonth.getMonth()+1);renderCal()};
+$('#calToday').onclick=()=>{calMonth=new Date();calMonth.setDate(1);selDay=today();renderCal()};
+[0,1,2].forEach(i=>$('#big'+i).addEventListener('input',()=>{const k=today();S.big[k]=S.big[k]||['','',''];S.big[k][i]=$('#big'+i).value;save()}));
+let nT;$('#notes').addEventListener('input',()=>{S.notes=$('#notes').value;clearTimeout(nT);$('#notesSaved').textContent='Saving…';nT=setTimeout(()=>{save();$('#notesSaved').textContent='Saved'},400)});
+$('#resetClear').onclick=()=>{S.reset={};save();renderReset();toast('New week, fresh start')};
+$('#clearExamples').onclick=()=>{S.tasks=S.tasks.filter(t=>!t.ex);S.events=S.events.filter(e=>!e.ex);save();renderAll();toast('Examples cleared. It\'s all yours now.')};
+$('#editHabits').onclick=()=>openSettings('#setHabits');
+
+/* ---------- tabs ---------- */
+function show(v){document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.view===v));document.querySelectorAll('.view').forEach(s=>s.hidden=s.id!=='view-'+v);try{localStorage.setItem(KEY+'-tab',v)}catch(e){}window.scrollTo({top:0})}
+try{const v=localStorage.getItem(KEY+'-tab');if(v&&$('#view-'+v))show(v)}catch(e){}
+
+/* ---------- settings ---------- */
+function openSettings(focus){$('#setName').value=S.name||'';$('#setGcal').value=S.gcal||'';$('#setHabits').value=S.habits.join('\n');$('#wipeConfirm').hidden=true;$('#drawer').hidden=false;(focus?$(focus):$('#setName')).focus()}
+$('#openSettings').onclick=()=>openSettings();
+$('#closeSettings').onclick=()=>$('#drawer').hidden=true;
+$('#drawer').addEventListener('click',e=>{if(e.target.id==='drawer')$('#drawer').hidden=true});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#drawer').hidden=true});
+$('#saveSettings').onclick=()=>{S.name=$('#setName').value.trim();S.gcal=gcalParse($('#setGcal').value);renderGcal();S.habits=$('#setHabits').value.split('\n').map(s=>s.trim()).filter(Boolean);save();renderAll();$('#drawer').hidden=true;toast('Settings saved')};
+$('#copyBackup').onclick=()=>{const txt=JSON.stringify(S);const box=$('#backupBox');box.value=txt;
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Backup copied. Paste it in a note or email to yourself.')).catch(()=>{box.select();toast('Backup is in the box below. Copy it from there.')})};
+$('#restoreBackup').onclick=()=>{try{const d=JSON.parse($('#backupBox').value);if(!d.tasks)throw 0;S=d;save();renderAll();$('#drawer').hidden=true;toast('Backup restored')}catch(e){toast('That text isn\'t a planner backup. Copy it again and paste the whole thing.')}};
+$('#wipe').onclick=()=>{$('#wipeConfirm').hidden=false};
+$('#wipeConfirm').onclick=()=>{S={name:S.name,tasks:[],events:[],big:{},notes:'',habits:S.habits,hlog:{},reset:{}};save();renderAll();$('#drawer').hidden=true;toast('Everything erased')};
+
+/* ---------- timer ---------- */
+let total=25*60,left=total,tick=null;
+function drawClock(){$('#clock').textContent=pad(Math.floor(left/60))+':'+pad(left%60)}
+function setTimer(m){clearInterval(tick);tick=null;total=left=m*60;$('#tStart').textContent='Start';drawClock()}
+$('#tStart').onclick=()=>{if(tick){clearInterval(tick);tick=null;$('#tStart').textContent='Resume';return}
+  $('#tStart').textContent='Pause';tick=setInterval(()=>{left--;drawClock();document.title=$('#clock').textContent+' · Planner';if(left<=0){clearInterval(tick);tick=null;left=0;$('#tStart').textContent='Start';document.title="Khristine's Daily Planner";toast('Time\'s up! Take a breather.')}},1000)};
+$('#tReset').onclick=()=>{setTimer(total/60);document.title="Khristine's Daily Planner"};
+
+
+/* ---------- Google Calendar ---------- */
+let gmode='WEEK',calsrc='planner';
+try{calsrc=localStorage.getItem(KEY+'-calsrc')||'planner';gmode=localStorage.getItem(KEY+'-gmode')||'WEEK'}catch(e){}
+function gcalParse(v){v=(v||'').trim();if(!v)return'';
+  const m=v.match(/src="([^"]+)"/);if(m)v=m[1].replace(/&amp;/g,'&');
+  if(/^https?:\/\//.test(v)){try{const u=new URL(v);const id=u.searchParams.getAll('src');if(id.length)return id.join(',')}catch(e){}return''}
+  return /@/.test(v)&&!/\s/.test(v)?v:''}
+function gcalURL(){const tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'Asia/Manila';
+  const ids=(S.gcal||'').split(',').filter(Boolean);
+  return 'https://calendar.google.com/calendar/embed?'+ids.map(i=>'src='+encodeURIComponent(i)).join('&')+'&ctz='+encodeURIComponent(tz)+'&mode='+gmode+'&showTitle=0&showPrint=0&showTabs=0&showCalendars=0&wkst=1'}
+function renderGcal(){
+  document.querySelectorAll('[data-calsrc]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.calsrc===calsrc));
+  document.querySelectorAll('[data-gmode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.gmode===gmode));
+  $('#gcalPane').hidden=calsrc!=='google';$('#plannerCal').hidden=calsrc!=='planner';
+  const has=!!S.gcal;$('#gcalEmpty').hidden=has;$('#gcalLive').hidden=!has;$('#gcalModes').hidden=!has;
+  if(has&&calsrc==='google'){const u=gcalURL();if($('#gcalFrame').getAttribute('src')!==u)$('#gcalFrame').setAttribute('src',u)}
+}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.calsrc){calsrc=b.dataset.calsrc;try{localStorage.setItem(KEY+'-calsrc',calsrc)}catch(e){}renderGcal()}
+  if(b.dataset.gmode){gmode=b.dataset.gmode;try{localStorage.setItem(KEY+'-gmode',gmode)}catch(e){}renderGcal()}});
+$('#gcalForm').addEventListener('submit',e=>{e.preventDefault();const id=gcalParse($('#gcalInput').value);
+  if(!id){toast('That doesn\'t look like a Calendar ID. Copy it again from Integrate calendar.');return}
+  S.gcal=id;save();$('#gcalInput').value='';renderGcal();toast('CraigAds calendar connected')});
+$('#gcalChange').onclick=()=>{S.gcal='';save();renderGcal()};
+renderGcal();
+
+/* ---------- Aria photos: a different one each day, tap for the next ---------- */
+const PICS=['images/aria-1.webp','images/aria-2.webp','images/aria-3.webp'];
+let pic=Math.round((new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())-new Date(new Date().getFullYear(),0,1))/864e5)%PICS.length;
+function showPic(i,anim){pic=(i+PICS.length)%PICS.length;const el=$('#sticker');el.src=PICS[pic];
+  if(anim){el.classList.remove('swap');void el.offsetWidth;el.classList.add('swap')}
+  $('#picDots').innerHTML=PICS.map((_,k)=>`<button aria-label="Photo ${k+1}" aria-pressed="${k===pic}" data-pic="${k}"></button>`).join('')}
+$('#sticker').addEventListener('click',()=>showPic(pic+1,true));
+$('#picDots').addEventListener('click',e=>{const b=e.target.closest('[data-pic]');if(b)showPic(+b.dataset.pic,true)});
+showPic(pic);
+renderAll();save();
+// refresh greeting/date if the page stays open past midnight
+setInterval(()=>{renderHeader();renderToday()},60000);
+})();
+</script>
+
+</body>
+</html>
