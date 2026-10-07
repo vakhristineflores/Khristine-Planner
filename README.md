@@ -1,6 +1,6 @@
 # Khristine's Daily Planner
 
-A personal planner for CraigAds work and life at home: today's to-dos, a calendar with next week's events, a verse for the day, a habit tracker, a focus timer and a notes page.
+A personal planner for work (CraigAds, CVS and personal projects) and life at home: today's to-dos, a calendar with next week's events, a verse for the day, a habit tracker, a focus timer and a notes page.
 
 ## Put it online with GitHub Pages
 
